@@ -1,0 +1,1569 @@
+{
+  "name": "Confirmar_Whatsapp",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "b88da4d9-4116-455f-8ec0-49441d120a90",
+        "options": {
+          "ignoreBots": false
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -460,
+        120
+      ],
+      "id": "821f8817-1bf2-4632-8f6a-a80d5d3bd473",
+      "name": "Webhook",
+      "webhookId": "b88da4d9-4116-455f-8ec0-49441d120a90"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {
+          "temperature": 0.3
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        360,
+        380
+      ],
+      "id": "56944af5-acde-4ed4-a610-38dc1113926f",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "lJa5CiwNVPzXwtiA",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "inputText": "={{ $('If').item.json.body.Body }}",
+        "categories": {
+          "categories": [
+            {
+              "category": "confirmacion",
+              "description": "Categoría: confirmacion  Palabras clave asociadas: sí confirmo, confirmo, confirmación, ok reserva, dale, perfecto, genial, Si reservo, acepto, bien, confirmo!"
+            },
+            {
+              "category": "cancelacion",
+              "description": "=no puedo, cancelo, cancelar, no voy, otra vez será, no me va bien, no acepto"
+            }
+          ]
+        },
+        "options": {
+          "fallback": "other"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.textClassifier",
+      "typeVersion": 1,
+      "position": [
+        380,
+        160
+      ],
+      "id": "2a975040-8464-46b5-b56d-368165dc668d",
+      "name": "Confirmador",
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "from": "=",
+        "to": "=",
+        "toWhatsapp": true,
+        "message": "=🎉 ¡Reserva confirmada!🎉\n\nGracias por confirmar {{ $('Reserva').item.json.fields.Nombre }}, 🙌  \nTu mesa en *Restaurante Olimpo* está lista para el {{ $json.fields.Fecha }} a las {{ $json.fields.Hora_disponible }} Para *{{ $('Reserva').item.json.fields.Invitados }}* personas\n\n🍽️ ¡Te esperamos con una experiencia única de sabor, ambiente y servicio!  \nSi necesitás cambiar algo, respondé a este mensaje sin problema.\n\n📍 Dirección: Av. de los Sabores 123  \n📞 Tel: 123 456 789",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.twilio",
+      "typeVersion": 1,
+      "position": [
+        1080,
+        -20
+      ],
+      "id": "32a06ce3-edb1-47d3-91c0-77dfc2e28808",
+      "name": "Conf_cliente",
+      "credentials": {
+        "twilioApi": {
+          "id": "7VikTRsy1584ymFq",
+          "name": "Twilio account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "appGrWg2QNhDx9kk6",
+          "mode": "list",
+          "cachedResultName": "Gestión_restaurante",
+          "cachedResultUrl": "https://airtable.com/appGrWg2QNhDx9kk6"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblEfvAEJnuRjzKSR",
+          "mode": "list",
+          "cachedResultName": "Reservas",
+          "cachedResultUrl": "https://airtable.com/appGrWg2QNhDx9kk6/tblEfvAEJnuRjzKSR"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Phone": "324234324",
+            "Estado": "Confirmado"
+          },
+          "matchingColumns": [
+            "Phone"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "ID_Reserva",
+              "displayName": "ID_Reserva",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Fecha",
+              "displayName": "Fecha",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Hora",
+              "displayName": "Hora",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "ID_Mesa",
+              "displayName": "ID_Mesa",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Invitados",
+              "displayName": "Invitados",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Nombre",
+              "displayName": "Nombre",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Phone",
+              "displayName": "Phone",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Estado",
+              "displayName": "Estado",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Confirmado",
+                  "value": "Confirmado"
+                },
+                {
+                  "name": "Reservado ",
+                  "value": "Reservado "
+                },
+                {
+                  "name": "",
+                  "value": ""
+                },
+                {
+                  "name": "Confirmed",
+                  "value": "Confirmed"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Notas",
+              "displayName": "Notas",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Actualizado",
+              "displayName": "Actualizado",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "typecast": true
+        }
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        720,
+        -20
+      ],
+      "id": "b86e98eb-3b23-4519-aa5b-23c4c5c85176",
+      "name": "Reserva",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "VOXv4XYWpt7zvnp8",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "appGrWg2QNhDx9kk6",
+          "mode": "list",
+          "cachedResultName": "Gestión_restaurante",
+          "cachedResultUrl": "https://airtable.com/appGrWg2QNhDx9kk6"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblEfvAEJnuRjzKSR",
+          "mode": "list",
+          "cachedResultName": "Reservas",
+          "cachedResultUrl": "https://airtable.com/appGrWg2QNhDx9kk6/tblEfvAEJnuRjzKSR"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Phone": "324234324",
+            "Estado": "Cancelado"
+          },
+          "matchingColumns": [
+            "Phone"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "ID_Reserva",
+              "displayName": "ID_Reserva",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Fecha",
+              "displayName": "Fecha",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Hora",
+              "displayName": "Hora",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "ID_Mesa",
+              "displayName": "ID_Mesa",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Invitados",
+              "displayName": "Invitados",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Nombre",
+              "displayName": "Nombre",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Phone",
+              "displayName": "Phone",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Estado",
+              "displayName": "Estado",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Confirmado",
+                  "value": "Confirmado"
+                },
+                {
+                  "name": "Reservado ",
+                  "value": "Reservado "
+                },
+                {
+                  "name": "Cancelado",
+                  "value": "Cancelado"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Notas",
+              "displayName": "Notas",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Actualizado",
+              "displayName": "Actualizado",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "typecast": true
+        }
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        820,
+        180
+      ],
+      "id": "494fe888-4a39-4a5b-83e6-bdad89846525",
+      "name": "Cancelación",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "VOXv4XYWpt7zvnp8",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "appGrWg2QNhDx9kk6",
+          "mode": "list",
+          "cachedResultName": "Restaurant_Management",
+          "cachedResultUrl": "https://airtable.com/appGrWg2QNhDx9kk6"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblAxvB06ZIIZMnUA",
+          "mode": "list",
+          "cachedResultName": "Disponibilidad_mesas",
+          "cachedResultUrl": "https://airtable.com/appGrWg2QNhDx9kk6/tblAxvB06ZIIZMnUA"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Estado": "Disponible",
+            "Teléfono": "={{ $json.fields.Phone }}",
+            "ID Reserva": "  "
+          },
+          "matchingColumns": [
+            "Teléfono"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Fecha",
+              "displayName": "Fecha",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "ID_Mesa",
+              "displayName": "ID_Mesa",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "T1",
+                  "value": "T1"
+                },
+                {
+                  "name": "T2",
+                  "value": "T2"
+                },
+                {
+                  "name": "T3",
+                  "value": "T3"
+                },
+                {
+                  "name": "T4",
+                  "value": "T4"
+                },
+                {
+                  "name": "T5",
+                  "value": "T5"
+                },
+                {
+                  "name": "ID Mesa",
+                  "value": "ID Mesa"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Hora_disponible",
+              "displayName": "Hora_disponible",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "12:00",
+                  "value": "12:00"
+                },
+                {
+                  "name": "13:00",
+                  "value": "13:00"
+                },
+                {
+                  "name": "14:00",
+                  "value": "14:00"
+                },
+                {
+                  "name": "15:00",
+                  "value": "15:00"
+                },
+                {
+                  "name": "19:00",
+                  "value": "19:00"
+                },
+                {
+                  "name": "20:00",
+                  "value": "20:00"
+                },
+                {
+                  "name": "21:00",
+                  "value": "21:00"
+                },
+                {
+                  "name": "Hora disponibilidad ",
+                  "value": "Hora disponibilidad "
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Estado",
+              "displayName": "Estado",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Estado",
+                  "value": "Estado"
+                },
+                {
+                  "name": "Disponible",
+                  "value": "Disponible"
+                },
+                {
+                  "name": "Reservada",
+                  "value": "Reservada"
+                },
+                {
+                  "name": "Confirmada",
+                  "value": "Confirmada"
+                },
+                {
+                  "name": "Temporal",
+                  "value": "Temporal"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "ID Reserva",
+              "displayName": "ID Reserva",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Teléfono",
+              "displayName": "Teléfono",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "typecast": true,
+          "updateAllMatches": false
+        }
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        1000,
+        180
+      ],
+      "id": "5be5665b-6ad5-4d9f-9567-3327cb821aae",
+      "name": "Act_dispo",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "VOXv4XYWpt7zvnp8",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "from": "=",
+        "to": "=",
+        "toWhatsapp": true,
+        "message": "=Perdona, no te he entendido. \n\n¿Podrías  confirmar tu asistencia?  \nSolo respondé con 👉 *“Sí confirmo”*\n\nAsí preparamos tu mesa con todo listo 🕯️  \n¡Te esperamos con ganas de sorprenderte!",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.twilio",
+      "typeVersion": 1,
+      "position": [
+        940,
+        420
+      ],
+      "id": "7f79f032-aa48-4d4b-98e1-0786c73acfc7",
+      "name": "Loop",
+      "executeOnce": true,
+      "credentials": {
+        "twilioApi": {
+          "id": "7VikTRsy1584ymFq",
+          "name": "Twilio account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "from": "=",
+        "to": "=",
+        "toWhatsapp": true,
+        "message": "=Hemos cancelado su reserva satisfactoriamente. \nEn caso de querer volver a reservar o desplazar la fecha, pongase en contacto con: +1 1234 2342 2332",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.twilio",
+      "typeVersion": 1,
+      "position": [
+        1180,
+        180
+      ],
+      "id": "9a3b3b14-4a1c-49e0-9eb2-337e66623ffb",
+      "name": "Loop1",
+      "credentials": {
+        "twilioApi": {
+          "id": "7VikTRsy1584ymFq",
+          "name": "Twilio account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 3
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -120,
+        140
+      ],
+      "id": "b0ec1b7e-d805-47a4-8142-9e1cd5d67fac",
+      "name": "Wait",
+      "webhookId": "d5d6ad35-bef2-4010-b97b-05ab9119d84b"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        80,
+        540
+      ],
+      "id": "63cff4ec-6902-485b-8573-4b063560f98d",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "appGrWg2QNhDx9kk6",
+          "mode": "list",
+          "cachedResultName": "Gestión_restaurante",
+          "cachedResultUrl": "https://airtable.com/appGrWg2QNhDx9kk6"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblEfvAEJnuRjzKSR",
+          "mode": "list",
+          "cachedResultName": "Reservas",
+          "cachedResultUrl": "https://airtable.com/appGrWg2QNhDx9kk6/tblEfvAEJnuRjzKSR"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Phone": "324234324"
+          },
+          "matchingColumns": [
+            "Phone"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "ID_Reserva",
+              "displayName": "ID_Reserva",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Fecha",
+              "displayName": "Fecha",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Hora",
+              "displayName": "Hora",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "ID_Mesa",
+              "displayName": "ID_Mesa",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Invitados",
+              "displayName": "Invitados",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Nombre",
+              "displayName": "Nombre",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Phone",
+              "displayName": "Phone",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Estado",
+              "displayName": "Estado",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Confirmado",
+                  "value": "Confirmado"
+                },
+                {
+                  "name": "Reservado ",
+                  "value": "Reservado "
+                },
+                {
+                  "name": "",
+                  "value": ""
+                },
+                {
+                  "name": "Confirmed",
+                  "value": "Confirmed"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Notas",
+              "displayName": "Notas",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Actualizado",
+              "displayName": "Actualizado",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "typecast": true
+        }
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        20,
+        0
+      ],
+      "id": "e79d44b7-230f-4c58-8de8-09e1b6257e6c",
+      "name": "existe?",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "VOXv4XYWpt7zvnp8",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Este es el estado final:{{ $('Reserva').item.json.fields.Estado }} y el numero: {{ $('Reserva').item.json.fields.ID_Reserva }}",
+        "options": {
+          "systemMessage": "=Eres un gestor de correos para confirmar reservas o cancelaciones de restaurante y enviarlo por Gmail al propio jefe del restaurante. Por ello adapta el tono y asume que ellos son clientes. \n\n\nUsa la herramienta \"gmail\" para enviar los avisos. \n\nEjemplo: \n\nLa reserva con número: \n{{ $('Reserva').item.json.fields.ID_Reserva }}\n\nHa sido cancelada o aceptada a petición del cliente. \n\nSiempre usa la herramienta \"gmail\" para enviar correo de confirmado o cancelado. \n\n\nEjemplo: Hola,\n\nLa reserva con número: {{ $('Reserva').item.json.fields.ID_Reserva }} ha sido: {{ $('Reserva').item.json.fields.Estado }}\n\n\nSaludos cordiales"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.8,
+      "position": [
+        1320,
+        -60
+      ],
+      "id": "e604b47c-1bb4-4280-8534-b3780be6c555",
+      "name": "Gestor_Empresa"
+    },
+    {
+      "parameters": {
+        "sendTo": "ailinkyt1@gmail.com",
+        "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Subject', `ejemplo: 🛑 Cancelación de Reserva🛑 o ✔️Confirmación de Reserva✔️ `, 'string') }}",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', `Haz una estructura profesional y extendida. `, 'string') }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        1520,
+        140
+      ],
+      "id": "9e60d3ae-e77c-45de-bbb8-2a1f00ec806a",
+      "name": "Gmail",
+      "webhookId": "c0faba7c-4091-403e-b873-604e900d26c4",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "raV42NfbEaC38GxA",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.fields.Estado }}",
+                    "rightValue": "Reservado ",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "785e3d2b-feab-4916-bbd2-7ffc64fb1569"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "d739bd13-1c3c-4a75-9f7e-0f86b398475b",
+                    "leftValue": "={{ $json.fields.Estado }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {
+          "ignoreCase": false
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        180,
+        160
+      ],
+      "id": "70dc5b83-60d8-490e-b7e1-eb8897e380af",
+      "name": "filtro"
+    },
+    {
+      "parameters": {
+        "amount": 3
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        760,
+        420
+      ],
+      "id": "2c3fd173-c0b6-473b-bfb3-8a24a48a4a09",
+      "name": "Wait1",
+      "webhookId": "d5d6ad35-bef2-4010-b97b-05ab9119d84b"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "80bd6f2c-675c-4327-9f2c-9e57f4a277a3",
+              "leftValue": "={{ $json.body.From }}",
+              "rightValue": "=whatsapp:+13522803626",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -280,
+        40
+      ],
+      "id": "8b9d146c-6f07-4cca-aa20-e41da56e883a",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "appGrWg2QNhDx9kk6",
+          "mode": "list",
+          "cachedResultName": "Restaurant_Management",
+          "cachedResultUrl": "https://airtable.com/appGrWg2QNhDx9kk6"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblAxvB06ZIIZMnUA",
+          "mode": "list",
+          "cachedResultName": "Disponibilidad_mesas",
+          "cachedResultUrl": "https://airtable.com/appGrWg2QNhDx9kk6/tblAxvB06ZIIZMnUA"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Estado": "Confirmada",
+            "ID Reserva": "=   {{ $json.fields.ID_Reserva }}",
+            "Fecha": "={{ $json.fields.Fecha }}",
+            "Hora_disponible": "={{ $json.fields.Hora }}"
+          },
+          "matchingColumns": [
+            "Fecha",
+            "Hora_disponible"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Fecha",
+              "displayName": "Fecha",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "ID_Mesa",
+              "displayName": "ID_Mesa",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "T1",
+                  "value": "T1"
+                },
+                {
+                  "name": "T2",
+                  "value": "T2"
+                },
+                {
+                  "name": "T3",
+                  "value": "T3"
+                },
+                {
+                  "name": "T4",
+                  "value": "T4"
+                },
+                {
+                  "name": "T5",
+                  "value": "T5"
+                },
+                {
+                  "name": "ID Mesa",
+                  "value": "ID Mesa"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Hora_disponible",
+              "displayName": "Hora_disponible",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "12:00",
+                  "value": "12:00"
+                },
+                {
+                  "name": "13:00",
+                  "value": "13:00"
+                },
+                {
+                  "name": "14:00",
+                  "value": "14:00"
+                },
+                {
+                  "name": "15:00",
+                  "value": "15:00"
+                },
+                {
+                  "name": "19:00",
+                  "value": "19:00"
+                },
+                {
+                  "name": "20:00",
+                  "value": "20:00"
+                },
+                {
+                  "name": "21:00",
+                  "value": "21:00"
+                },
+                {
+                  "name": "Hora disponibilidad ",
+                  "value": "Hora disponibilidad "
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Estado",
+              "displayName": "Estado",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Estado",
+                  "value": "Estado"
+                },
+                {
+                  "name": "Disponible",
+                  "value": "Disponible"
+                },
+                {
+                  "name": "Reservada",
+                  "value": "Reservada"
+                },
+                {
+                  "name": "Confirmada",
+                  "value": "Confirmada"
+                },
+                {
+                  "name": "Temporal",
+                  "value": "Temporal"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "ID Reserva",
+              "displayName": "ID Reserva",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "ID",
+              "displayName": "ID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "typecast": true,
+          "updateAllMatches": false
+        }
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        900,
+        -20
+      ],
+      "id": "335291d2-ce16-43dd-9638-2f290b49ae31",
+      "name": "Act_dispo4",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "VOXv4XYWpt7zvnp8",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "ailink.app.n8n.cloud",
+            "user-agent": "TwilioProxy/1.1",
+            "content-length": "444",
+            "accept": "*/*",
+            "accept-encoding": "gzip, br",
+            "cdn-loop": "cloudflare; loops=1; subreqs=1",
+            "cf-connecting-ip": "3.89.229.58",
+            "cf-ew-via": "15",
+            "cf-ipcountry": "US",
+            "cf-ray": "92b1074a550907bb-IAD",
+            "cf-visitor": "{\"scheme\":\"https\"}",
+            "cf-worker": "n8n.cloud",
+            "content-type": "application/x-www-form-urlencoded",
+            "i-twilio-idempotency-token": "19243211-2da3-4caf-a80b-e1f53ef578a6",
+            "x-forwarded-for": "3.89.229.58, 162.158.152.197",
+            "x-forwarded-host": "ailink.app.n8n.cloud",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "traefik-prod-users-gwc-8-86454fd949-ms967",
+            "x-home-region": "us1",
+            "x-is-trusted": "yes",
+            "x-real-ip": "3.89.229.58",
+            "x-twilio-signature": "xVFk/GrfbwpYbIbkJMX0NSD41bg="
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "SmsMessageSid": "SM85f867d5c08ad9b174839969cbcad482",
+            "NumMedia": "0",
+            "ProfileName": "A",
+            "MessageType": "text",
+            "SmsSid": "SM85f867d5c08ad9b174839969cbcad482",
+            "WaId": "34675096998",
+            "SmsStatus": "received",
+            "Body": "confirmo",
+            "To": "whatsapp:+13522803626",
+            "MessagingServiceSid": "MG2ff29135e4e7cd0bbedc9e4dbff264f3",
+            "NumSegments": "1",
+            "ReferralNumMedia": "0",
+            "MessageSid": "SM85f867d5c08ad9b174839969cbcad482",
+            "AccountSid": "ACaddf810173683e3e889f9caec15eb0ba",
+            "From": "whatsapp:+34675096998",
+            "ApiVersion": "2010-04-01"
+          },
+          "webhookUrl": "https://ailink.app.n8n.cloud/webhook/b88da4d9-4116-455f-8ec0-49441d120a90",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Confirmador",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Gestor_Empresa",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Confirmador": {
+      "main": [
+        [
+          {
+            "node": "Reserva",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Cancelación",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Reserva": {
+      "main": [
+        [
+          {
+            "node": "Act_dispo4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cancelación": {
+      "main": [
+        [
+          {
+            "node": "Act_dispo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Act_dispo": {
+      "main": [
+        [
+          {
+            "node": "Loop1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "existe?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "existe?": {
+      "main": [
+        [
+          {
+            "node": "filtro",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Conf_cliente": {
+      "main": [
+        [
+          {
+            "node": "Gestor_Empresa",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop1": {
+      "main": [
+        [
+          {
+            "node": "Gestor_Empresa",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail": {
+      "ai_tool": [
+        [
+          {
+            "node": "Gestor_Empresa",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "filtro": {
+      "main": [
+        [
+          {
+            "node": "Confirmador",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "Loop",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Act_dispo4": {
+      "main": [
+        [
+          {
+            "node": "Conf_cliente",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "e32ae35d-3d55-4949-a3e9-ce051aa3acef",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "a84e1650db35b3b1d0963d6af7c6424ea60d23d1d483782f4a30be0c69a6a248"
+  },
+  "id": "2clozNHUsGpv0EU4",
+  "tags": []
+}

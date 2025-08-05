@@ -1,0 +1,330 @@
+{
+  "name": "Calendar Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "model": "gpt-4o",
+        "options": {}
+      },
+      "id": "74894421-79bb-4c2c-ac78-117a08cec9f0",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        -920,
+        360
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "QzsYC53925sV8iKT",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7ab380a2-a8d3-421c-ab4e-748ea8fb7904",
+              "name": "response",
+              "value": "Unable to perform task. Please try again.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "16c251d1-00ee-4332-bac6-f986db9f8bf0",
+      "name": "Try Again",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        0,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "39c2f302-03be-4464-a17a-d7cc481d6d44",
+              "name": "=response",
+              "value": "={{$json.output}}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "14ebbd02-1675-428f-b617-8015ddac99a3",
+      "name": "Success",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.query }}",
+        "options": {
+          "systemMessage": "=# Overview\nYou are a calendar assistant. Your responsibilities include creating, getting, and deleting events in the user's calendar.\n\n**Calendar Management Tools**  \n   - Use \"Create Event\" for solo events.   \n   - Use \"Get Events\" to fetch calendar schedules when requested.\n   - Use \"Delete Event\" to delete an event. You must use \"Get Events\" first to get the ID of the event to delete.\n   - Use \"Update Event\" to update an event. You must use \"Get Events\" first to get the ID of the event to update.\n\n## Final Notes\nHere is the current date/time: {{ $now }}\nIf a duration for an event isn't specified, assume it will be one hour."
+        }
+      },
+      "id": "97745962-0c14-40fe-850e-3947c8f03f79",
+      "name": "Calendar Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.6,
+      "position": [
+        -680,
+        100
+      ],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -920,
+        100
+      ],
+      "id": "bf7cb822-113d-4251-8a19-00d1084d59be",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "resource": "event",
+        "operation": "create",
+        "calendarId": {
+          "__rl": true,
+          "value": "AAMkADY5NTcxMDcxLTNkNTYtNGIyNC05OWM1LTNlZWU5NTJkYTI5ZQBGAAAAAABNjv0QmlLRR6fDKo72lFF7BwDkf7W4HzsFQo870EaXJFoNAAAAAAEGAADkf7W4HzsFQo870EaXJFoNAAAAvvXuAAA=",
+          "mode": "list",
+          "cachedResultName": "Calendar"
+        },
+        "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Title', ``, 'string') }}",
+        "startDateTime": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Start', ``, 'string') }}",
+        "endDateTime": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('End', ``, 'string') }}",
+        "additionalFields": {
+          "body": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Description', ``, 'string') }}",
+          "isOnlineMeeting": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Is_Online_Meeting', ``, 'boolean') }}"
+        }
+      },
+      "type": "n8n-nodes-base.microsoftOutlookTool",
+      "typeVersion": 2,
+      "position": [
+        -740,
+        460
+      ],
+      "id": "4915d80c-f299-4be1-b3cb-4926521c6f14",
+      "name": "Create Event",
+      "webhookId": "a74f9485-3076-4356-b949-c264fd8d1f9f",
+      "credentials": {
+        "microsoftOutlookOAuth2Api": {
+          "id": "rencg0Q4ms0qvLZT",
+          "name": "Microsoft Outlook account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "event",
+        "fromAllCalendars": false,
+        "calendarId": {
+          "__rl": true,
+          "value": "AAMkADY5NTcxMDcxLTNkNTYtNGIyNC05OWM1LTNlZWU5NTJkYTI5ZQBGAAAAAABNjv0QmlLRR6fDKo72lFF7BwDkf7W4HzsFQo870EaXJFoNAAAAAAEGAADkf7W4HzsFQo870EaXJFoNAAAAvvXuAAA=",
+          "mode": "list",
+          "cachedResultName": "Calendar"
+        },
+        "returnAll": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Return_All', ``, 'boolean') }}",
+        "filters": {
+          "custom": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Filter_Query', ``, 'string') }}"
+        }
+      },
+      "type": "n8n-nodes-base.microsoftOutlookTool",
+      "typeVersion": 2,
+      "position": [
+        -600,
+        460
+      ],
+      "id": "4f3555b3-a4e3-4ffa-8fb0-50741e323d67",
+      "name": "Get Events",
+      "webhookId": "a74f9485-3076-4356-b949-c264fd8d1f9f",
+      "credentials": {
+        "microsoftOutlookOAuth2Api": {
+          "id": "rencg0Q4ms0qvLZT",
+          "name": "Microsoft Outlook account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "event",
+        "operation": "delete",
+        "calendarId": {
+          "__rl": true,
+          "value": "AAMkADY5NTcxMDcxLTNkNTYtNGIyNC05OWM1LTNlZWU5NTJkYTI5ZQBGAAAAAABNjv0QmlLRR6fDKo72lFF7BwDkf7W4HzsFQo870EaXJFoNAAAAAAEGAADkf7W4HzsFQo870EaXJFoNAAAAvvXuAAA=",
+          "mode": "list",
+          "cachedResultName": "Calendar"
+        },
+        "eventId": {
+          "__rl": true,
+          "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Event', ``, 'string') }}",
+          "mode": "id"
+        }
+      },
+      "type": "n8n-nodes-base.microsoftOutlookTool",
+      "typeVersion": 2,
+      "position": [
+        -460,
+        460
+      ],
+      "id": "59f60a95-15df-4e22-9708-a933e4d4ef59",
+      "name": "Delete Event",
+      "webhookId": "a74f9485-3076-4356-b949-c264fd8d1f9f",
+      "credentials": {
+        "microsoftOutlookOAuth2Api": {
+          "id": "rencg0Q4ms0qvLZT",
+          "name": "Microsoft Outlook account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "event",
+        "operation": "update",
+        "calendarId": {
+          "__rl": true,
+          "value": "AAMkADY5NTcxMDcxLTNkNTYtNGIyNC05OWM1LTNlZWU5NTJkYTI5ZQBGAAAAAABNjv0QmlLRR6fDKo72lFF7BwDkf7W4HzsFQo870EaXJFoNAAAAAAEGAADkf7W4HzsFQo870EaXJFoNAAAAvvXuAAA=",
+          "mode": "list",
+          "cachedResultName": "Calendar"
+        },
+        "eventId": {
+          "__rl": true,
+          "value": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Event', ``, 'string') }}",
+          "mode": "id"
+        },
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.microsoftOutlookTool",
+      "typeVersion": 2,
+      "position": [
+        -320,
+        460
+      ],
+      "id": "303acc53-630d-4cd0-8577-dac76131966e",
+      "name": "Update Event",
+      "webhookId": "a74f9485-3076-4356-b949-c264fd8d1f9f",
+      "credentials": {
+        "microsoftOutlookOAuth2Api": {
+          "id": "rencg0Q4ms0qvLZT",
+          "name": "Microsoft Outlook account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Calendar Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calendar Agent": {
+      "main": [
+        [
+          {
+            "node": "Success",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Try Again",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Calendar Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Event": {
+      "ai_tool": [
+        [
+          {
+            "node": "Calendar Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Events": {
+      "ai_tool": [
+        [
+          {
+            "node": "Calendar Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete Event": {
+      "ai_tool": [
+        [
+          {
+            "node": "Calendar Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Event": {
+      "ai_tool": [
+        [
+          {
+            "node": "Calendar Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "37b7be59-d062-4e9f-a3bd-3d493b9ed4d1",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "b7d606ccb177c361bfddbc23012fbee67ed62889d723ce79530a672c49381cb3"
+  },
+  "id": "JP3Pbbudlfu4REqZ",
+  "tags": []
+}

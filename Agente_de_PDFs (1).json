@@ -1,0 +1,646 @@
+{
+  "name": "Agente de PDFs",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "id": "5a9a1881-84f4-4f5f-ba31-117d94336aa6",
+      "name": "Telegram Trigger",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -420,
+        -55
+      ],
+      "webhookId": "c6a9a358-6607-4e0e-8bb9-3d065f1716aa",
+      "credentials": {
+        "telegramApi": {
+          "id": "PRAok7FQMGKmkIl9",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "fileId": "={{$json.message.photo[2].file_id }}{{ $json.message.document.file_id }}"
+      },
+      "id": "fe292ea9-ab81-4466-826a-93f22b0dd7c8",
+      "name": "Download File",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -200,
+        -60
+      ],
+      "webhookId": "e52abcb4-6cb9-42e6-8eba-a89756196408",
+      "credentials": {
+        "telegramApi": {
+          "id": "PRAok7FQMGKmkIl9",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "b9439b49-afe5-4965-a88e-ae9c8636d812",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        300,
+        340
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "NnFjfNQYB6qnNgWA",
+          "name": "OpenAI"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Telegram Trigger').item.json.message.chat.id }}"
+      },
+      "id": "276f51f8-9df0-4d99-9d64-6ef16aa17004",
+      "name": "Window Buffer Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        420,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.cloud.llamaindex.ai/api/parsing/upload",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "application/json"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer llx-gzpqZwPxtAF5uVCOXHouFjsn39BrPUFwgzxLMDgutbDpXhJh"
+            },
+            {
+              "name": "Content-Type",
+              "value": "multipart/from-data"
+            },
+            {
+              "name": "parse_mode",
+              "value": "parse_page_with_llm"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "file",
+              "inputDataFieldName": "data"
+            },
+            {
+              "name": "parse_mode",
+              "value": "parse_page_with_agent"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        20,
+        -55
+      ],
+      "id": "1b6dc5bf-f7a1-4a15-8beb-9def1ab625f1",
+      "name": "HTTP LlamaCloud1"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1430npKcShV_2cN6WDLng6_-HsmrIP2YMYqDm5QJL6eI",
+          "mode": "list",
+          "cachedResultName": "Tickets/Facturas OCR",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1430npKcShV_2cN6WDLng6_-HsmrIP2YMYqDm5QJL6eI/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Hoja 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1430npKcShV_2cN6WDLng6_-HsmrIP2YMYqDm5QJL6eI/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Fecha": "={{ $json.output.Fecha }}",
+            "Nº Factura": "={{ $json.output['Nº Factura'] }}",
+            "Total": "={{ $json.output.Total }}",
+            "Productos": "={{ $json.output.Productos }}",
+            "Notas": "={{ $json.output.Notas }}",
+            "Dirección": "={{ $json.output['Dirección'] }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Fecha",
+              "displayName": "Fecha",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Nº Factura",
+              "displayName": "Nº Factura",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Total",
+              "displayName": "Total",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Productos",
+              "displayName": "Productos",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Dirección",
+              "displayName": "Dirección",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Notas",
+              "displayName": "Notas",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "useAppend": true
+        }
+      },
+      "id": "0c12e956-d91d-47df-afb0-b8d173d253f9",
+      "name": "Google Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        100,
+        160
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "2WUHQShzMSZiLRWr",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "96da39e6-bab8-46ab-919f-56e36d3b7575",
+      "name": "Telegram",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        680,
+        140
+      ],
+      "webhookId": "799f6195-8885-4102-9ebf-a3c41838040d",
+      "credentials": {
+        "telegramApi": {
+          "id": "PRAok7FQMGKmkIl9",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.status }}",
+                    "rightValue": "SUCCESS",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "3304ed77-9f37-4717-ad05-dc8e952f1eee"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "b47f30d5-e711-481e-b6e0-2f8138efff81",
+                    "leftValue": "={{ $json.status }}",
+                    "rightValue": "PENDING",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        440,
+        -140
+      ],
+      "id": "67518bb6-108e-472d-a7c6-a99e016be2d5",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "amount": 10
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        680,
+        -20
+      ],
+      "id": "37f960d2-c9f6-43ad-bef7-43ef28c4de69",
+      "name": "Wait",
+      "webhookId": "b84e59b5-e78b-45ee-a3a9-e7716e136680"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.cloud.llamaindex.ai/api/parsing/job/{{ $json.id }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "application/json"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer llx-gzpqZwPxtAF5uVCOXHouFjsn39BrPUFwgzxLMDgutbDpXhJh"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        240,
+        -140
+      ],
+      "id": "5c2565eb-ec50-4753-8014-4d2ed7801b81",
+      "name": "HTTP Create Data"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.cloud.llamaindex.ai/api/parsing/job/{{ $json.id }}/result/markdown",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer llx-gzpqZwPxtAF5uVCOXHouFjsn39BrPUFwgzxLMDgutbDpXhJh"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        680,
+        -180
+      ],
+      "id": "6a328d46-b272-4b93-834c-861e258619ab",
+      "name": "HTTP Get Data"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Toda la información de la factura o ticket: {{ $('HTTP Get Data').item.json.markdown }}",
+        "options": {
+          "systemMessage": "=Eres un asistente que extrae información clave de las facturas y tickets de compra generando respuestas concisas para el usuario.\n\nDebes extraer el importe total, la fecha, todos los productos comprados y un resumen de las notas de la factura o ticket.\n\nResponde de forma clara y concisa para ayudar al usuario a entender rápidamente los detalles de su factura o ticket.\n\nEjemplo de respuesta:\n\nEstos son los datos:\n\nNúmero de Factura: INV-12345\nFecha: 10-05-2025\nImporte Total: 950.00\nDirección de Facturación: Calle Mayor 12\nNotas: (puedes añadir detalles como el método de pago e información relevante que no se haya mencionado)\n\nHe registrado toda la información en la base de datos."
+        }
+      },
+      "id": "94ffd6f1-427a-43bb-a9c7-ec461a094239",
+      "name": "AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        320,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "text": "={{ $json.markdown }}",
+        "attributes": {
+          "attributes": [
+            {
+              "name": "Fecha",
+              "description": "=Fecha de la factura o ticket",
+              "required": true
+            },
+            {
+              "name": "Nº Factura",
+              "description": "=Número de factura",
+              "required": true
+            },
+            {
+              "name": "Total",
+              "description": "=Total de la factura o ticket",
+              "required": true
+            },
+            {
+              "name": "Productos",
+              "description": "=Todos los productos comprados",
+              "required": true
+            },
+            {
+              "name": "Dirección",
+              "description": "=Dirección del vendedor",
+              "required": true
+            },
+            {
+              "name": "Notas",
+              "description": "=Información relevante de la factura o ticket que no se haya mencionado anteriormente, como método de pago etc.",
+              "required": true
+            }
+          ]
+        },
+        "options": {
+          "systemPromptTemplate": "=Eres un asistente experto en extraer toda la información relevante de facturas y tickets de compra.\n\nDebes devolver las respuestas siempre en Español."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.informationExtractor",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        160
+      ],
+      "id": "3cc77543-a948-4620-8575-3d6b07774599",
+      "name": "Information Extractor"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        340
+      ],
+      "id": "983a7d88-708e-475e-a1b2-cbf1286fac27",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "LXNo9gEaBhbuLmGA",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Download File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download File": {
+      "main": [
+        [
+          {
+            "node": "HTTP LlamaCloud1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheet": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP LlamaCloud1": {
+      "main": [
+        [
+          {
+            "node": "HTTP Create Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "HTTP Get Data",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "HTTP Create Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Create Data": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Get Data": {
+      "main": [
+        [
+          {
+            "node": "Information Extractor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Information Extractor": {
+      "main": [
+        [
+          {
+            "node": "Google Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Information Extractor",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "c1c7e872-1ef5-44bc-8e8c-32670b2d9a01",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "55fa9691eb3ab6aac6f8cde1ee0de20769c2d1538be7e38cce4b31a1bc73509e"
+  },
+  "id": "JnnrbUvHI6SkndQr",
+  "tags": []
+}
