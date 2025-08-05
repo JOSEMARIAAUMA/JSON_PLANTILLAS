@@ -1,0 +1,87 @@
+{
+  "name": "Get Schema Supabase",
+  "nodes": [
+    {
+      "parameters": {
+        "jsCode": "function transformSchema(input) {\n    const tables = {};\n    \n    input.forEach(({ json }) => {\n        if (!json) return;\n        \n        const { tablename, schemaname, column_name, data_type } = json;\n        \n        if (!tables[tablename]) {\n            tables[tablename] = { schema: schemaname, columns: [] };\n        }\n        tables[tablename].columns.push(`${column_name} (${data_type})`);\n    });\n    \n    return Object.entries(tables)\n        .map(([tablename, { schema, columns }]) => `Table ${tablename} (Schema: ${schema}) has columns: ${columns.join(\", \")}`)\n        .join(\"\\n\\n\");\n}\n\n// Example usage\nconst input = $input.all();\nconsole.log(input);\nconst transformedSchema = transformSchema(input);\n\nreturn { data: transformedSchema };"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1000,
+        -160
+      ],
+      "id": "4aef20bb-4ea9-41bf-b896-4d8427bf02a0",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT \n    t.schemaname,\n    t.tablename,\n    c.column_name,\n    c.data_type\nFROM \n    pg_catalog.pg_tables t\nJOIN \n    information_schema.columns c\n    ON t.schemaname = c.table_schema\n    AND t.tablename = c.table_name\nWHERE \n    t.schemaname = 'public'\nORDER BY \n    t.tablename, c.ordinal_position;",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        780,
+        -160
+      ],
+      "id": "53b4c9c1-204b-4ef5-8d8e-fd20f8b1fc71",
+      "name": "Postgres1",
+      "alwaysOutputData": false,
+      "executeOnce": false,
+      "credentials": {
+        "postgres": {
+          "id": "MEnctr4S8TtNxWSm",
+          "name": "Postgres account 2"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "fa79e935-12b0-4e09-97e7-2223dda6ef87",
+      "name": "Execute Workflow Trigger",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1,
+      "position": [
+        560,
+        -160
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Postgres1": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Workflow Trigger": {
+      "main": [
+        [
+          {
+            "node": "Postgres1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "3ec23978-16d3-4960-b61c-a6807446e92e",
+  "meta": {
+    "instanceId": "bc4172b75c86925f8efadccf1584fb330b212a1581f727b3740667ad70836ca4"
+  },
+  "id": "h157ZIHcNQNnyS4k",
+  "tags": []
+}

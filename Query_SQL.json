@@ -1,0 +1,119 @@
+{
+  "name": "Query SQL",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "{{ $json.query.sql }}",
+        "options": {}
+      },
+      "id": "37818583-956b-412e-a2de-3c6470ae0ce4",
+      "name": "Postgres",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        240,
+        0
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "MEnctr4S8TtNxWSm",
+          "name": "Postgres account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e2f94fb1-3deb-466a-a36c-e3476511d5f2",
+              "name": "response",
+              "value": "={{ $json }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "004ca2ca-fad4-427a-bcc2-ca5fd17d2e2e",
+      "name": "Edit Fields",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        680,
+        0
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "24a2b4e6-8e40-4a8f-8a66-168bff8e2298",
+      "name": "Execute Workflow Trigger",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Obtener los items de entrada\nconst items = $input.all();\n\n// Unir todos los elementos en un solo objeto\nconst combinedItem = {\n  resultado: items.map(item => ({\n    ...item.json // Mantiene todos los parámetros dinámicamente\n  }))\n};\n\n// Retornar el nuevo array con un solo objeto\nreturn [{ json: combinedItem }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        460,
+        0
+      ],
+      "id": "8653028c-e885-479a-a4ed-a892c5d258b5",
+      "name": "Code"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Postgres": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Workflow Trigger": {
+      "main": [
+        [
+          {
+            "node": "Postgres",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "08ff2ca5-d839-4bf9-8ec8-00334a323ac7",
+  "meta": {
+    "instanceId": "bc4172b75c86925f8efadccf1584fb330b212a1581f727b3740667ad70836ca4"
+  },
+  "id": "uczmxOvA3KpUtmMO",
+  "tags": []
+}

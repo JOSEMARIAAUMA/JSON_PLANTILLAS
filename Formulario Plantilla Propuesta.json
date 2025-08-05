@@ -1,0 +1,447 @@
+{
+  "name": "propuestas_personalizadas.",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "copy",
+        "fileId": {
+          "__rl": true,
+          "value": "1uJemRAVbdLcSp84W59dimqTzuumuAtDQ3-dUpTLp4sk",
+          "mode": "list",
+          "cachedResultName": "propuesta_real",
+          "cachedResultUrl": "https://docs.google.com/presentation/d/1uJemRAVbdLcSp84W59dimqTzuumuAtDQ3-dUpTLp4sk/edit?usp=drivesdk"
+        },
+        "name": "={{ $json.message.content['Empresa cliente'] }}_propuesta",
+        "options": {
+          "copyRequiresWriterPermission": false
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        560,
+        -40
+      ],
+      "id": "ed39d282-8b67-453d-86a5-65cc7cdf0fb2",
+      "name": "Copiar_plantilla",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "fIubscERu0f00JLQ",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "replaceText",
+        "presentationId": "={{ $json.id }}",
+        "textUi": {
+          "textValues": [
+            {
+              "matchCase": true,
+              "text": "(Nombre)",
+              "replaceText": "={{ $('Formulario').item.json.Nombre }} {{ $('Formulario').item.json.Apellidos }}"
+            },
+            {
+              "text": "(Nombre_proyecto)",
+              "replaceText": "={{ $('Generar_propuesta').item.json.message.content.proyecto_nombre }}"
+            },
+            {
+              "text": "(objetivo del proyecto)",
+              "replaceText": "={{ $('Generar_propuesta').item.json.message.content['Objetivo del proyecto'] }}"
+            },
+            {
+              "text": "(nuestro enfoque)",
+              "replaceText": "={{ $('Generar_propuesta').item.json.message.content['Nuestro enfoque'] }}"
+            },
+            {
+              "text": "(concepto1)",
+              "replaceText": "={{ $('Generar_propuesta').item.json.message.content['concepto economico1'] }}"
+            },
+            {
+              "text": "(concepto2)",
+              "replaceText": "={{ $('Generar_propuesta').item.json.message.content['concepto economico2'] }}"
+            },
+            {
+              "text": "(concepto3)",
+              "replaceText": "={{ $('Generar_propuesta').item.json.message.content['concepto economico3'] }}"
+            },
+            {
+              "text": "(concepto4)",
+              "replaceText": "={{ $('Generar_propuesta').item.json.message.content['concepto economico4'] }}"
+            },
+            {
+              "text": "(concepto5)",
+              "replaceText": "={{ $('Generar_propuesta').item.json.message.content['concepto economico5'] }}"
+            },
+            {
+              "text": "(precio1)",
+              "replaceText": "={{ $('Generar_propuesta').item.json.message.content['concepto economico1_euros'] }}€"
+            },
+            {
+              "text": "(precio2)",
+              "replaceText": "={{ $('Generar_propuesta').item.json.message.content['concepto economico2_euros'] }}€"
+            },
+            {
+              "text": "(precio3)",
+              "replaceText": "={{ $('Generar_propuesta').item.json.message.content['concepto economico3_euros'] }}€"
+            },
+            {
+              "text": "(precio4)",
+              "replaceText": "={{ $('Generar_propuesta').item.json.message.content['concepto economico4_euros'] }}€"
+            },
+            {
+              "text": "(precio5)",
+              "replaceText": "={{ $('Generar_propuesta').item.json.message.content['concepto economico5_euros'] }}€"
+            },
+            {
+              "text": "(total)",
+              "replaceText": "={{ $('Generar_propuesta').item.json.message.content.total_euros }}€"
+            },
+            {
+              "text": "(fecha)",
+              "replaceText": "={{$now.format('yyyy-MM-dd')  }}"
+            },
+            {
+              "text": "(Empresa)",
+              "replaceText": "={{ $('Formulario').item.json['Nombre empresa'] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSlides",
+      "typeVersion": 2,
+      "position": [
+        740,
+        -40
+      ],
+      "id": "03688724-ae68-42aa-bf96-6f7c59e67d16",
+      "name": "remplazar_variables",
+      "credentials": {
+        "googleSlidesOAuth2Api": {
+          "id": "a440S3HFPox3QWk3",
+          "name": "Google Slides account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Formulario').item.json.Correo }}",
+        "subject": "=Re: Propuesta para {{ $('Formulario').item.json['Nombre empresa'] }}",
+        "emailType": "text",
+        "message": "=Hola {{ $('Formulario').item.json.Nombre }},\n\nGracias por la charla de antes. He aprovechado para preparar una propuesta con más detalle. La encontrarás adjunta.\n\nSi tienes cualquier duda, dímelo sin problema.\n\n\nSaludos,\n\nAgustín Medina",
+        "options": {
+          "appendAttribution": false,
+          "attachmentsUi": {
+            "attachmentsBinary": [
+              {}
+            ]
+          }
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1120,
+        -40
+      ],
+      "id": "683ff446-8844-4774-923a-a5b7a5bbd2ed",
+      "name": "Enviar_propuesta",
+      "webhookId": "26d4deeb-0930-491a-9d7d-2b66c8344910",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "S4CMnBUaK1jGcjf9",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "GPT-4O"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "You are a helpful, intelligent writing assistant.",
+              "role": "system"
+            },
+            {
+              "content": "=Tu tarea es generar una propuesta utilizando datos de entrada de un formulario. Esta propuesta debe estar altamente personalizada, ser específica y de alta calidad, considerando que la enviaremos inmediatamente después de que la termines.\n\nContexto: somos una agencia de automatización/no-code que desarrolla sistemas orientados a growth, revenue ops, etc.\n\nLa plantilla de propuesta que estamos usando tiene muchos campos. Debes devolver estos campos en un único objeto JSON.\n\nUsa este formato:\n{\n  \"Objetivo del proyecto\": \"\",\n  \"Nuestro enfoque\": \"\",\n  \"proyecto_nombre\" \"\",\n  \"concepto economico1\": \"\",\n  \"concepto economico2\": \"\",\n  \"concepto economico3\": \"\",\n  \"concepto economico4\": \"\",\n  \"concepto economico5\": \"\",\n  \"concepto economico1_euros\": \"\",\n  \"concepto economico2_euros\": \"\",\n  \"concepto economico3_euros\": \"\",\n  \"concepto economico4_euros\": \"\",\n  \"concepto economico5_euros\": \"\",\n  \"total_euros\":\"\",\n  \"Nombre cliente\": \"\",\n  \"Empresa cliente\": \"\",\n\n}\n\nReglas:\n\t1.\tUsa un tono espartano y casual.\n\t2.\tVe al grano, pero mantén un tono profesional—supón que estás escribiendo para una audiencia sofisticada.\n\t3.\tAsegúrate de rellenar todos los campos. No omitas ninguno ni dejes variables vacías.\n\t4.\tSé breve. Si un campo contiene el término “Description”, no debe superar las catorce palabras. Para “descriptionName” no uses mayúsculas tipo título (title case).\n    5. En \"Objetivo del proyecto\" extiendete unos 400 caracteres aprox y hazlo de igual forma en \"neustro enfoque\"\n     6. En \"concepto economico_euros\" jamás uses \"euros\" simplemente pon el valor numérico y ya está. Este valor debe ser un \"despiece\" del total. ",
+              "role": "system"
+            },
+            {
+              "content": "={\n  \"Nombre_empresa\":\"{{ $json['Nombre empresa'] }}\",\n  \"problema\": \"{{ $json.Problema }}\",\n  \"Solución\": \"{{ $json['Solución'] }}\",\n  \"Enfoque\": \"{{ $json.Enfoque }}\",\n  \"Plazo\": \"{{ $json['Plazo '] }}\",\n  \"Total\": \"{{ $json.Coste }}\",\n}"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.6,
+      "position": [
+        220,
+        -40
+      ],
+      "id": "5a9da595-2cf2-472e-bac0-b7f0d4c30d2a",
+      "name": "Generar_propuesta",
+      "credentials": {
+        "openAiApi": {
+          "id": "83Bgk5FOQ84rbXoZ",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $('Copiar_plantilla').item.json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        920,
+        -40
+      ],
+      "id": "525c137d-c505-473f-b2b4-a9f3b02c728f",
+      "name": "descargar",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "fIubscERu0f00JLQ",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Formulario\n",
+        "height": 240,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -80,
+        -120
+      ],
+      "id": "19c98810-87db-45d9-96a9-d12d0ad1340f",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "formTitle": "Sales Call Logging Form",
+        "formDescription": "This form logs a sales call & automatically generates a proposal.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Nombre",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Apellidos",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Nombre empresa",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Correo",
+              "fieldType": "email"
+            },
+            {
+              "fieldLabel": "Pagina web",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Problema",
+              "fieldType": "textarea",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Solución",
+              "fieldType": "textarea",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Enfoque",
+              "fieldType": "textarea",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Coste",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Plazo ",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        -20,
+        -40
+      ],
+      "id": "906a4739-0674-4f4b-8179-eef320709fe5",
+      "name": "Formulario",
+      "webhookId": "66eef2c8-7ffa-4a27-8e9b-8486e3c48836"
+    },
+    {
+      "parameters": {
+        "content": "## Personalización",
+        "height": 240,
+        "width": 300,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        200,
+        -120
+      ],
+      "id": "c7a281a6-597b-4771-99ea-b5088d27a2f5",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## Copiar - Customizar - Descargar\n",
+        "height": 240,
+        "width": 520,
+        "color": 2
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        540,
+        -120
+      ],
+      "id": "d0b15ea4-7da8-43d9-a27a-bfd4cc3c9d81",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "## Enviar correo\n",
+        "height": 240
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1080,
+        -120
+      ],
+      "id": "bbf474a5-545a-4dfd-8312-eba3948b8942",
+      "name": "Sticky Note3"
+    }
+  ],
+  "pinData": {
+    "Formulario": [
+      {
+        "json": {
+          "Nombre": "Agusti",
+          "Apellidos": "Medina",
+          "Nombre empresa": "Neurofeedback",
+          "Correo": "ailinkyt@gmail.com",
+          "Pagina web": "ailink.com",
+          "Problema": "Necesita un sistema de automatización inteligente para orquestar equipos de trabajo",
+          "Solución": "Realizar sistema multiagente con RAG y contenido automatizado",
+          "Enfoque": "Integrar un RAG en n8n con otros sistemas coexistentes",
+          "Coste": "4000",
+          "Plazo ": "1 mes",
+          "submittedAt": "2025-07-08T12:04:22.294+02:00",
+          "formMode": "test"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Copiar_plantilla": {
+      "main": [
+        [
+          {
+            "node": "remplazar_variables",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "remplazar_variables": {
+      "main": [
+        [
+          {
+            "node": "descargar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generar_propuesta": {
+      "main": [
+        [
+          {
+            "node": "Copiar_plantilla",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "descargar": {
+      "main": [
+        [
+          {
+            "node": "Enviar_propuesta",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Formulario": {
+      "main": [
+        [
+          {
+            "node": "Generar_propuesta",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "8bd14e2f-78c0-466c-895c-fd85b66b2d81",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "dba9844ea0944d958a071c154eaf52f0d451d647c14f2fdb78389cb1a8f69b93"
+  },
+  "id": "c4pE48EYmRDhDpo7",
+  "tags": [
+    {
+      "name": "top_automatizaciones",
+      "id": "9rByYg5tZcQHYoO3",
+      "createdAt": "2025-07-08T09:58:27.979Z",
+      "updatedAt": "2025-07-08T09:58:27.979Z"
+    }
+  ]
+}

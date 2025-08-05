@@ -1,0 +1,228 @@
+{
+  "name": "Contact Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "gpt-4o"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -640,
+        300
+      ],
+      "id": "ec445c1d-b76c-4904-9b81-de56f2972280",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "QzsYC53925sV8iKT",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.query }}",
+        "options": {
+          "systemMessage": "=# Overview\nYou are a contact management assistant. Your responsibilities include looking up contacts, adding new contacts, or updating a contact's information.\n\n**Contact Management**  \n   - Use \"Get All Contacts\" to retrieve contact information. \n   - Use \"Add Contact\" to store new contact information or modify existing entries. "
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        -520,
+        80
+      ],
+      "id": "a3fc22ba-e383-410e-ab19-a4b1c68862d3",
+      "name": "Contact Agent",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4f360190-a717-4a93-8336-d03ea65975d5",
+              "name": "response",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        0,
+        0
+      ],
+      "id": "bc4a3193-d6c6-4ab6-9780-0cf0caecbcec",
+      "name": "Response"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4f360190-a717-4a93-8336-d03ea65975d5",
+              "name": "response",
+              "value": "An error occurred. Please try again.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        0,
+        180
+      ],
+      "id": "cc14a550-1198-4117-96b2-17d4f8601cc3",
+      "name": "Try Again"
+    },
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -740,
+        80
+      ],
+      "id": "48f861b9-66c7-4837-afc9-df4b794d9349",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "boardId": "6171291769"
+      },
+      "type": "n8n-nodes-base.mondayComTool",
+      "typeVersion": 1,
+      "position": [
+        -440,
+        320
+      ],
+      "id": "1d4e9075-8089-4ef7-bfce-e75bad5eb285",
+      "name": "Get All Contacts",
+      "credentials": {
+        "mondayComApi": {
+          "id": "Aws0fVsEEABkq1hz",
+          "name": "Monday.com account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "boardItem",
+        "boardId": "6171291769",
+        "groupId": "1714396419_empresas_y_contacto__1",
+        "name": "Prueba",
+        "additionalFields": {
+          "columnValues": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Column_Values', ``, 'json') }}"
+        }
+      },
+      "type": "n8n-nodes-base.mondayComTool",
+      "typeVersion": 1,
+      "position": [
+        -280,
+        320
+      ],
+      "id": "a2abbb16-b4a3-4ec5-8f01-bc0626bb7488",
+      "name": "Add Contact",
+      "credentials": {
+        "mondayComApi": {
+          "id": "Aws0fVsEEABkq1hz",
+          "name": "Monday.com account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Contact Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Contact Agent": {
+      "main": [
+        [
+          {
+            "node": "Response",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Try Again",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Contact Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get All Contacts": {
+      "ai_tool": [
+        [
+          {
+            "node": "Contact Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add Contact": {
+      "ai_tool": [
+        [
+          {
+            "node": "Contact Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "aaaf07a5-d23b-47aa-8dc6-500493b00036",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "b7d606ccb177c361bfddbc23012fbee67ed62889d723ce79530a672c49381cb3"
+  },
+  "id": "taCS9Sw27NIJd7mt",
+  "tags": []
+}
